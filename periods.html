@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Periods</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --pink-bg:#FFF5F8;
+    --pink-card:#FDE8EF;
+    --pink:#EC6C9C;
+    --pink-dark:#C94C7C;
+    --pink-deep:#A8386A;
+    --ink:#3A2C33;
+    --muted:#A98A96;
+    --line:#F6D9E3;
+    --white:#FFFFFF;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0; padding:0; background:transparent;}
+  body{font-family:'Inter',sans-serif; color:var(--ink); -webkit-font-smoothing:antialiased;}
+
+  .app{
+    max-width:480px; margin:0 auto; padding:24px 18px 70px; min-height:100vh;
+    background:var(--pink-bg);
+  }
+
+  header{display:flex; align-items:center; justify-content:space-between; margin-bottom:22px;}
+  .brand{display:flex; align-items:center; gap:8px; font-family:'Fredoka',sans-serif; font-weight:600; font-size:22px; color:var(--pink-deep);}
+  .brand svg{width:24px; height:24px;}
+  .navbtn{
+    font-family:'Inter',sans-serif; font-size:12.5px; font-weight:600; padding:8px 14px;
+    border-radius:20px; border:1px solid var(--line); background:var(--white); color:var(--pink-dark); cursor:pointer;
+  }
+  .navbtn.active{background:var(--pink); color:var(--white); border-color:var(--pink);}
+
+  .homecard{
+    background:var(--white); border-radius:24px; padding:30px 20px; text-align:center;
+    box-shadow:0 6px 24px rgba(233,108,156,0.12); margin-bottom:20px;
+  }
+  .status-label{font-size:12.5px; color:var(--muted); font-weight:600; letter-spacing:0.4px; text-transform:uppercase; margin-bottom:6px;}
+  .day-count{font-family:'Fredoka',sans-serif; font-size:52px; font-weight:600; color:var(--pink-deep); line-height:1;}
+  .day-count small{font-size:16px; font-weight:600; color:var(--muted);}
+  .status-sub{font-size:13px; color:var(--muted); margin-top:6px; margin-bottom:22px;}
+
+  .bigbtn{
+    width:150px; height:150px; border-radius:50%; border:none; cursor:pointer;
+    font-family:'Fredoka',sans-serif; font-weight:600; font-size:17px; color:var(--white);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
+    margin:0 auto; box-shadow:0 10px 28px rgba(233,108,156,0.35);
+    transition:transform .12s ease;
+  }
+  .bigbtn:active{transform:scale(0.96);}
+  .bigbtn svg{width:30px; height:30px;}
+  .bigbtn.start{background:linear-gradient(160deg, #F080AC, var(--pink-dark));}
+  .bigbtn.end{background:linear-gradient(160deg, #C94C7C, var(--pink-deep));}
+
+  .lastcard{
+    background:var(--pink-card); border-radius:16px; padding:14px 16px; margin-bottom:14px;
+    display:flex; align-items:center; gap:12px;
+  }
+  .lastcard svg{width:20px; height:20px; color:var(--pink-dark); flex-shrink:0;}
+  .lastcard .ltext{font-size:12.5px; color:var(--pink-deep); line-height:1.5;}
+  .lastcard .ltext b{font-weight:700;}
+
+  .empty{text-align:center; padding:40px 20px; color:var(--muted); font-family:'Fredoka',sans-serif; font-size:15px; font-weight:600;}
+  .empty small{display:block; font-family:'Inter',sans-serif; font-weight:400; font-size:12.5px; margin-top:6px;}
+
+  .entry{
+    background:var(--white); border-radius:16px; padding:14px 16px; margin-bottom:10px;
+    box-shadow:0 3px 12px rgba(233,108,156,0.08);
+  }
+  .entry-top{display:flex; align-items:center; justify-content:space-between;}
+  .entry-dates{font-family:'Fredoka',sans-serif; font-weight:600; font-size:14.5px; color:var(--ink);}
+  .entry-days{
+    font-size:11.5px; font-weight:700; color:var(--pink-dark); background:var(--pink-card);
+    padding:4px 10px; border-radius:12px;
+  }
+  .entry-meta{display:flex; align-items:center; justify-content:space-between; margin-top:8px;}
+  .entry-gap{font-size:12px; color:var(--muted);}
+  .entry-del{background:none; border:none; color:var(--muted); font-size:12px; cursor:pointer;}
+  .entry-del:hover{color:var(--pink-deep);}
+  .entry-edit{background:none; border:none; color:var(--pink-dark); font-size:12px; cursor:pointer; font-weight:600; margin-right:12px;}
+  .entry-edit:hover{color:var(--pink-deep);}
+  .edit-form{margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);}
+  .edit-row{display:flex; gap:8px; margin-bottom:10px;}
+  .edit-field{flex:1;}
+  .edit-field label{display:block; font-size:10.5px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:4px;}
+  .edit-field input{
+    width:100%; border:1px solid var(--line); border-radius:8px; padding:8px 9px;
+    font-family:'Inter',sans-serif; font-size:13px; color:var(--ink);
+  }
+  .edit-field input:focus{outline:1.5px solid var(--pink);}
+  .edit-actions{display:flex; gap:8px;}
+  .edit-btn{
+    flex:1; padding:9px; border-radius:8px; border:1px solid var(--line); font-size:12.5px; font-weight:700;
+    cursor:pointer; background:var(--white); color:var(--muted); font-family:'Inter',sans-serif;
+  }
+  .edit-btn.primary{background:var(--pink); border-color:var(--pink); color:var(--white);}
+  .edit-hint{font-size:11px; color:var(--muted); margin-bottom:8px;}
+  .active-tag{font-size:11px; font-weight:700; color:var(--pink); background:#FCE3ED; padding:3px 9px; border-radius:10px;}
+
+  ::selection{background:var(--pink-card);}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header>
+    <div class="brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.6-9.5-9.2C.7 8.2 2.7 4.3 6.6 4c2.2-.2 4 .9 5.4 2.9C13.4 4.9 15.2 3.8 17.4 4c3.9.3 5.9 4.2 4.1 7.8C19 16.4 12 21 12 21z"/></svg>
+      Periods
+    </div>
+    <button class="navbtn" id="reportBtn">Report</button>
+  </header>
+
+  <div id="content"><div class="empty">Loading\u2026</div></div>
+</div>
+
+<script>
+(function(){
+  var LS_KEY = 'periods_data_v1';
+  var storageOK = false;
+  try{ var t='__pt__'; window.localStorage.setItem(t,'1'); window.localStorage.removeItem(t); storageOK = true; }catch(e){ storageOK = false; }
+
+  var periods = []; // {id, start:'YYYY-MM-DD', end:'YYYY-MM-DD'|null}
+  var view = 'home'; // home | report
+  var editingId = null;
+
+  function pad(n){ return n<10 ? '0'+n : ''+n; }
+  function todayStr(){ var d=new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+  function parseDateStr(s){ var p=s.split('-').map(Number); return new Date(p[0],p[1]-1,p[2]); }
+  function fmtPretty(s){
+    if(!s) return '';
+    var d = parseDateStr(s);
+    return d.toLocaleDateString(undefined, {month:'short', day:'numeric', year:'numeric'});
+  }
+  function daysBetween(s1, s2){
+    var d1 = parseDateStr(s1), d2 = parseDateStr(s2);
+    return Math.round((d2-d1)/86400000);
+  }
+
+  function load(){
+    if(storageOK){
+      try{
+        var raw = window.localStorage.getItem(LS_KEY);
+        if(raw){ periods = JSON.parse(raw) || []; }
+      }catch(e){}
+    }
+    render();
+  }
+  function persist(){
+    if(!storageOK) return;
+    try{ window.localStorage.setItem(LS_KEY, JSON.stringify(periods)); }catch(e){}
+  }
+  function save(){ persist(); render(); }
+
+  function sortedDesc(){
+    return periods.slice().sort(function(a,b){ return parseDateStr(b.start) - parseDateStr(a.start); });
+  }
+  function sortedAsc(){
+    return periods.slice().sort(function(a,b){ return parseDateStr(a.start) - parseDateStr(b.start); });
+  }
+
+  function activePeriod(){
+    return periods.find(function(p){ return !p.end; }) || null;
+  }
+
+  function startPeriod(){
+    if(activePeriod()) return;
+    periods.push({ id: Date.now()+'-'+Math.random().toString(36).slice(2,7), start: todayStr(), end: null });
+    save();
+  }
+  function endPeriod(){
+    var p = activePeriod();
+    if(!p) return;
+    var today = todayStr();
+    if(parseDateStr(today) < parseDateStr(p.start)){ return; }
+    p.end = today;
+    save();
+  }
+  function deleteEntry(id){
+    periods = periods.filter(function(p){ return p.id!==id; });
+    save();
+  }
+
+  function updateEntry(id, newStart, newEnd){
+    var p = periods.find(function(x){ return x.id===id; });
+    if(!p) return 'Entry not found.';
+    if(!newStart) return 'Start date is required.';
+    if(newEnd && parseDateStr(newEnd) < parseDateStr(newStart)) return 'End date can\'t be before the start date.';
+    p.start = newStart;
+    p.end = newEnd || null;
+    save();
+    return null;
+  }
+
+  function gapForEntry(entry, ascList){
+    var idx = ascList.findIndex(function(p){ return p.id===entry.id; });
+    if(idx<=0) return null;
+    var prev = ascList[idx-1];
+    return daysBetween(prev.start, entry.start);
+  }
+
+  function heartIcon(){
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.6-9.5-9.2C.7 8.2 2.7 4.3 6.6 4c2.2-.2 4 .9 5.4 2.9C13.4 4.9 15.2 3.8 17.4 4c3.9.3 5.9 4.2 4.1 7.8C19 16.4 12 21 12 21z"/></svg>';
+  }
+  function checkIcon(){
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l6 6L20 6"/></svg>';
+  }
+
+  function renderHome(){
+    var active = activePeriod();
+    var asc = sortedAsc();
+    var desc = sortedDesc();
+    var html = '<div class="homecard">';
+
+    if(active){
+      var dayNum = daysBetween(active.start, todayStr()) + 1;
+      html += '<div class="status-label">Period in progress</div>';
+      html += '<div class="day-count">'+dayNum+' <small>day'+(dayNum===1?'':'s')+'</small></div>';
+      html += '<div class="status-sub">Started '+fmtPretty(active.start)+'</div>';
+      html += '<button class="bigbtn end" id="endBtn">'+checkIcon()+'End Period</button>';
+    } else {
+      html += '<div class="status-label">No active period</div>';
+      html += '<div class="day-count" style="font-size:28px;">Ready when you are</div>';
+      html += '<div class="status-sub">Tap start on day one</div>';
+      html += '<button class="bigbtn start" id="startBtn">'+heartIcon()+'Start Period</button>';
+    }
+    html += '</div>';
+
+    var lastCompleted = desc.filter(function(p){ return p.end && p.id!==(active?active.id:null); })[0];
+    if(lastCompleted){
+      var dur = daysBetween(lastCompleted.start, lastCompleted.end) + 1;
+      var gap = gapForEntry(lastCompleted, asc);
+      html += '<div class="lastcard">'+heartIcon()+
+        '<div class="ltext">Last period: <b>'+fmtPretty(lastCompleted.start)+' \u2013 '+fmtPretty(lastCompleted.end)+'</b> ('+dur+' day'+(dur===1?'':'s')+')'+
+        (gap!==null ? ' \u00b7 gap was <b>'+gap+' days</b>' : '')+
+        '</div></div>';
+    }
+
+    document.getElementById('content').innerHTML = html;
+  }
+
+  function renderReport(){
+    var desc = sortedDesc();
+    var asc = sortedAsc();
+    var html = '';
+    if(desc.length===0){
+      html = '<div class="empty">No periods logged yet.<small>Start one from the Home tab to see it here.</small></div>';
+    } else {
+      desc.forEach(function(p){
+        var isActive = !p.end;
+        var durText, gapText;
+        if(isActive){
+          var d = daysBetween(p.start, todayStr())+1;
+          durText = 'Day '+d+' \u00b7 ongoing';
+        } else {
+          var dur = daysBetween(p.start, p.end)+1;
+          durText = dur+' day'+(dur===1?'':'s');
+        }
+        var gap = gapForEntry(p, asc);
+        gapText = gap!==null ? 'Gap since previous: '+gap+' days' : 'First logged period';
+
+        html += '<div class="entry">';
+        html += '<div class="entry-top"><div class="entry-dates">'+fmtPretty(p.start)+(p.end ? ' \u2013 '+fmtPretty(p.end) : '')+'</div>';
+        html += '<div class="entry-days">'+(isActive ? '<span class="active-tag">Active</span>' : durText)+'</div></div>';
+        html += '<div class="entry-meta"><div class="entry-gap">'+gapText+'</div>';
+        html += '<div><button class="entry-edit" data-id="'+p.id+'">edit</button><button class="entry-del" data-id="'+p.id+'">remove</button></div></div>';
+
+        if(editingId===p.id){
+          html += '<div class="edit-form" data-edit-for="'+p.id+'">';
+          html += '<div class="edit-hint">Leave end date blank if this period is still ongoing.</div>';
+          html += '<div class="edit-row">';
+          html += '<div class="edit-field"><label>Start date</label><input type="date" class="edit-start" value="'+p.start+'"></div>';
+          html += '<div class="edit-field"><label>End date</label><input type="date" class="edit-end" value="'+(p.end||'')+'"></div>';
+          html += '</div>';
+          html += '<div class="edit-error" style="color:var(--pink-deep); font-size:11.5px; font-weight:600; min-height:14px; margin-bottom:6px;"></div>';
+          html += '<div class="edit-actions">';
+          html += '<button class="edit-btn" data-action="cancel-edit">Cancel</button>';
+          html += '<button class="edit-btn primary" data-action="save-edit" data-id="'+p.id+'">Save</button>';
+          html += '</div></div>';
+        }
+
+        html += '</div>';
+      });
+    }
+    document.getElementById('content').innerHTML = html;
+  }
+
+  function render(){
+    document.getElementById('reportBtn').classList.toggle('active', view==='report');
+    if(view==='report') renderReport(); else renderHome();
+  }
+
+  document.getElementById('reportBtn').addEventListener('click', function(){
+    view = (view==='report') ? 'home' : 'report';
+    render();
+  });
+
+  document.getElementById('content').addEventListener('click', function(e){
+    if(e.target.closest('#startBtn')) startPeriod();
+    else if(e.target.closest('#endBtn')) endPeriod();
+    else {
+      var editBtn = e.target.closest('.entry-edit');
+      var delBtn = e.target.closest('.entry-del');
+      var cancelBtn = e.target.closest('[data-action="cancel-edit"]');
+      var saveBtn = e.target.closest('[data-action="save-edit"]');
+      if(editBtn){ editingId = editBtn.getAttribute('data-id'); render(); }
+      else if(cancelBtn){ editingId = null; render(); }
+      else if(saveBtn){
+        var container = saveBtn.closest('.edit-form');
+        var newStart = container.querySelector('.edit-start').value;
+        var newEnd = container.querySelector('.edit-end').value;
+        var err = updateEntry(saveBtn.getAttribute('data-id'), newStart, newEnd);
+        if(err){ container.querySelector('.edit-error').textContent = err; }
+        else { editingId = null; render(); }
+      }
+      else if(delBtn){
+        if(confirm('Remove this entry? This can\'t be undone.')) deleteEntry(delBtn.getAttribute('data-id'));
+      }
+    }
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>
