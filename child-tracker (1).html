@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Little Steps</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --blue-bg:#EAF4FD;
+    --blue-card:#DCEEFC;
+    --blue:#6FA8DC;
+    --blue-dark:#3E7CB1;
+    --blue-deep:#2C5F8A;
+    --ink:#2E3A42;
+    --muted:#87A0B3;
+    --line:#CFE4F5;
+    --white:#FFFFFF;
+    --pink:#F3A6C1;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0; padding:0; background:transparent;}
+  body{font-family:'Inter',sans-serif; color:var(--ink); -webkit-font-smoothing:antialiased;}
+
+  .app{max-width:520px; margin:0 auto; padding:20px 16px 70px; min-height:100vh; background:var(--blue-bg);}
+
+  header{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; gap:8px; flex-wrap:wrap;}
+  .brand{display:flex; align-items:center; gap:7px; font-family:'Fredoka',sans-serif; font-weight:600; font-size:20px; color:var(--blue-deep);}
+  .brand svg{width:22px; height:22px;}
+  .navgroup{display:flex; gap:6px; flex-wrap:wrap;}
+  .navbtn{
+    font-family:'Inter',sans-serif; font-size:11px; font-weight:600; padding:7px 11px;
+    border-radius:18px; border:1px solid var(--line); background:var(--white); color:var(--blue-dark); cursor:pointer;
+  }
+  .navbtn.active{background:var(--blue-dark); color:var(--white); border-color:var(--blue-dark);}
+
+  .profcard{
+    display:flex; align-items:center; gap:12px; background:var(--white); border-radius:18px; padding:12px 14px;
+    margin-bottom:16px; cursor:pointer; box-shadow:0 4px 16px rgba(62,124,177,0.1);
+  }
+  .prof-photo{
+    width:48px; height:48px; border-radius:50%; object-fit:cover; background:var(--blue-card); flex-shrink:0;
+    border:2px solid var(--blue-card);
+  }
+  .prof-photo-placeholder{
+    width:48px; height:48px; border-radius:50%; background:var(--blue-card); flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; color:var(--blue-dark);
+  }
+  .prof-photo-placeholder svg{width:22px; height:22px;}
+  .prof-info .pname{font-family:'Fredoka',sans-serif; font-weight:600; font-size:15.5px;}
+  .prof-info .page{font-size:12px; color:var(--muted); margin-top:1px;}
+  .prof-arrow{margin-left:auto; color:var(--muted);}
+  .prof-arrow svg{width:16px; height:16px;}
+
+  .catgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:18px;}
+  .catbtn{
+    background:var(--white); border:1px solid var(--line); border-radius:16px; padding:12px 6px;
+    display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer;
+    box-shadow:0 2px 8px rgba(62,124,177,0.06);
+  }
+  .catbtn .cicon{width:26px; height:26px; color:var(--blue-dark);}
+  .catbtn .clabel{font-size:10.5px; font-weight:700; color:var(--ink); text-align:center; line-height:1.2;}
+  .catbtn .ccount{font-family:'Fredoka',sans-serif; font-size:13px; font-weight:600; color:var(--blue-dark);}
+
+  .sleepcard{
+    background:var(--white); border-radius:18px; padding:16px; margin-bottom:16px; text-align:center;
+    box-shadow:0 4px 16px rgba(62,124,177,0.1);
+  }
+  .sleepcard .slabel{font-size:11.5px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:6px;}
+  .sleepcard .sval{font-family:'Fredoka',sans-serif; font-size:26px; font-weight:600; color:var(--blue-deep); margin-bottom:10px;}
+  .sleepbtn{
+    padding:11px 22px; border-radius:24px; border:none; color:var(--white); font-family:'Fredoka',sans-serif;
+    font-weight:600; font-size:14.5px; cursor:pointer; display:inline-flex; align-items:center; gap:7px;
+  }
+  .sleepbtn svg{width:17px;height:17px;}
+  .sleepbtn.go{background:linear-gradient(160deg,#7CB9E8,var(--blue-dark));}
+  .sleepbtn.stop{background:linear-gradient(160deg,#F3A6C1,#D9698F);}
+
+  .form{background:var(--white); border:1px solid var(--line); border-radius:16px; padding:14px; margin-bottom:16px;}
+  .form-row{margin-bottom:10px;}
+  .form-row label{display:block; font-size:10.5px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:4px;}
+  .form-row input[type=text], .form-row input[type=number], .form-row input[type=date], .form-row input[type=time], .form-row select, .form-row textarea{
+    width:100%; border:1px solid var(--line); border-radius:9px; padding:9px 10px; font-family:'Inter',sans-serif;
+    font-size:13.5px; color:var(--ink); background:var(--white);
+  }
+  .form-row input:focus, .form-row select:focus, .form-row textarea:focus{outline:1.5px solid var(--blue-dark);}
+  .chiprow{display:flex; flex-wrap:wrap; gap:6px;}
+  .chip{
+    padding:6px 11px; border-radius:16px; border:1px solid var(--line); background:var(--white);
+    font-size:12px; font-weight:600; color:var(--muted); cursor:pointer;
+  }
+  .chip.sel{background:var(--blue-dark); border-color:var(--blue-dark); color:var(--white);}
+  .chip.addtag{border-style:dashed; color:var(--blue-dark);}
+  .form-actions{display:flex; gap:8px; margin-top:12px;}
+  .btn{flex:1; padding:10px; border-radius:9px; border:1px solid var(--line); font-size:13px; font-weight:700; cursor:pointer; background:var(--white); color:var(--muted); font-family:'Inter',sans-serif;}
+  .btn.primary{background:var(--blue-dark); border-color:var(--blue-dark); color:var(--white);}
+
+  .section-title{font-family:'Fredoka',sans-serif; font-weight:600; font-size:15px; color:var(--blue-deep); margin:18px 0 8px;}
+  .tabs-row{display:flex; gap:6px; margin-bottom:14px;}
+  .tab2{font-size:11.5px; font-weight:700; padding:7px 13px; border-radius:16px; border:1px solid var(--line); background:var(--white); color:var(--muted); cursor:pointer;}
+  .tab2.sel{background:var(--blue-dark); color:var(--white); border-color:var(--blue-dark);}
+
+  .daynav{display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:14px;}
+  .daynav button{background:var(--white); border:1px solid var(--line); border-radius:50%; width:32px; height:32px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--blue-dark);}
+  .daynav button svg{width:15px;height:15px;}
+  .daynav .dtext{font-family:'Fredoka',sans-serif; font-weight:600; font-size:14.5px; min-width:150px; text-align:center;}
+
+  .moonrow{display:flex; align-items:center; gap:8px; justify-content:center; margin-bottom:14px; background:var(--blue-card); padding:8px 12px; border-radius:12px; font-size:12.5px; color:var(--blue-deep); font-weight:600;}
+  .moonrow .memoji{font-size:18px;}
+
+  .catlog-group{margin-bottom:14px;}
+  .catlog-head{display:flex; align-items:center; gap:7px; font-family:'Fredoka',sans-serif; font-weight:600; font-size:13.5px; color:var(--blue-deep); margin-bottom:6px;}
+  .catlog-head svg{width:16px;height:16px;}
+  .catlog-item{background:var(--white); border-radius:12px; padding:10px 12px; margin-bottom:6px; font-size:12.5px; display:flex; justify-content:space-between; align-items:center; gap:8px; box-shadow:0 2px 6px rgba(62,124,177,0.06);}
+  .catlog-item .li-main{flex:1;}
+  .catlog-item .li-name{font-weight:700; color:var(--ink);}
+  .catlog-item .li-detail{color:var(--muted); font-size:11.5px; margin-top:2px;}
+  .catlog-item .li-time{font-size:11px; color:var(--blue-dark); font-weight:700; white-space:nowrap;}
+  .catlog-item .li-del{background:none;border:none;color:var(--muted); cursor:pointer; font-size:11px;}
+
+  .summarygrid{display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:14px;}
+  .sumcard{background:var(--white); border-radius:12px; padding:10px 12px; box-shadow:0 2px 6px rgba(62,124,177,0.06);}
+  .sumcard .sc-label{font-size:10.5px; color:var(--muted); font-weight:700; text-transform:uppercase;}
+  .sumcard .sc-val{font-family:'Fredoka',sans-serif; font-size:17px; font-weight:600; color:var(--blue-deep);}
+
+  .empty{text-align:center; padding:36px 16px; color:var(--muted); font-family:'Fredoka',sans-serif; font-size:14px; font-weight:600;}
+
+  .profile-photo-big{width:84px; height:84px; border-radius:50%; object-fit:cover; border:3px solid var(--blue-card); display:block; margin:0 auto 10px;}
+  .profile-photo-big-placeholder{width:84px; height:84px; border-radius:50%; background:var(--blue-card); display:flex; align-items:center; justify-content:center; margin:0 auto 10px; color:var(--blue-dark);}
+  .profile-photo-big-placeholder svg{width:36px;height:36px;}
+  .photobtn{display:block; margin:0 auto 16px; font-size:12px; font-weight:700; color:var(--blue-dark); background:none; border:none; cursor:pointer; text-decoration:underline;}
+
+  .growthchart{width:100%; height:110px; margin-bottom:8px;}
+  .photogrid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
+  .photocell{background:var(--white); border-radius:12px; overflow:hidden; box-shadow:0 2px 6px rgba(62,124,177,0.06);}
+  .photocell img{width:100%; height:90px; object-fit:cover; display:block;}
+  .photocell .pcap{font-size:10px; color:var(--muted); text-align:center; padding:4px;}
+
+  ::selection{background:var(--blue-card);}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header>
+    <div class="brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1-3.8 4-6 7.5-6s6.5 2.2 7.5 6"/></svg>
+      Little Steps
+    </div>
+    <div class="navgroup">
+      <button class="navbtn" id="reportBtn">Report</button>
+      <button class="navbtn" id="notesBtn">Notes</button>
+      <button class="navbtn" id="logbookBtn">&larr; Logbook</button>
+    </div>
+  </header>
+  <div id="content"><div class="empty">Loading&hellip;</div></div>
+</div>
+
+<script>
+(function(){
+  var LS_KEY = 'child_tracker_v1';
+  var storageOK = false;
+  try{ var t='__ct__'; window.localStorage.setItem(t,'1'); window.localStorage.removeItem(t); storageOK=true; }catch(e){ storageOK=false; }
+
+  var state = {
+    child: { name:'', dob:'', photos:[], growth:[] },
+    entries: [],
+    sleepEntries: [],
+    customFoodTags: [],
+    customMoods: [],
+    notes: []
+  };
+  var view = 'home';
+  var openCategory = null;
+  var reportTab = 'day';
+  var reportDate = todayStr();
+  var editingGrowthForm = false;
+  var editingSleepId = null;
+  var editingNoteId = null;
+  var formDraft = { tags:[], singleVal:'' }; // tags for food, singleVal for consistency/mood
+
+  var FOOD_TAGS_DEFAULT = ['Protein','Carbohydrate','Nuts','Fruits','Vegetables','Dairy','Sugar/Sweet','Fats'];
+  var MOODS_DEFAULT = ['Happy','Cranky','Tantrum','Calm','Cooperative'];
+  function allMoods(){ return MOODS_DEFAULT.concat(state.customMoods); }
+
+  function pad(n){ return n<10 ? '0'+n : ''+n; }
+  function todayStr(){ var d=new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+  function nowISO(){ return new Date().toISOString(); }
+  function parseDateStr(s){ var p=s.split('-').map(Number); return new Date(p[0],p[1]-1,p[2]); }
+  function dateOnly(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+  function fmtPretty(s){ if(!s) return ''; var d=parseDateStr(s); return d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}); }
+  function fmtTime(iso){ if(!iso) return ''; var d=new Date(iso); return d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}); }
+  function escapeHtml(s){ var div=document.createElement('div'); div.textContent = s||''; return div.innerHTML; }
+  function isoDateStr(iso){ var d=new Date(iso); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+  function toDatetimeLocal(iso){ if(!iso) return ''; var d=new Date(iso); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes()); }
+  function fromDatetimeLocal(v){ if(!v) return null; return new Date(v).toISOString(); }
+
+  function ageString(dob){
+    if(!dob) return '';
+    var b = parseDateStr(dob), t = dateOnly(new Date());
+    var years = t.getFullYear()-b.getFullYear();
+    var months = t.getMonth()-b.getMonth();
+    if(t.getDate() < b.getDate()) months--;
+    if(months<0){ years--; months+=12; }
+    if(years<1) return months+' mo';
+    return years+'y '+months+'m';
+  }
+
+  function moonPhase(dateObj){
+    var lp = 2551443;
+    var newMoonRef = Date.UTC(2000,0,6,18,14,0)/1000;
+    var phase = ((dateObj.getTime()/1000 - newMoonRef) % lp);
+    if(phase<0) phase += lp;
+    var day = phase/86400;
+    var idx = Math.floor((day/29.53)*8+0.5) % 8;
+    var names = ['New Moon','Waxing Crescent','First Quarter','Waxing Gibbous','Full Moon','Waning Gibbous','Last Quarter','Waning Crescent'];
+    var emojis = ['\ud83c\udf11','\ud83c\udf12','\ud83c\udf13','\ud83c\udf14','\ud83c\udf15','\ud83c\udf16','\ud83c\udf17','\ud83c\udf18'];
+    return { name:names[idx], emoji:emojis[idx] };
+  }
+
+  function load(){
+    if(storageOK){
+      try{
+        var raw = window.localStorage.getItem(LS_KEY);
+        if(raw){
+          var parsed = JSON.parse(raw);
+          state.child = parsed.child || state.child;
+          state.entries = parsed.entries || [];
+          state.sleepEntries = parsed.sleepEntries || [];
+          state.customFoodTags = parsed.customFoodTags || [];
+          state.customMoods = parsed.customMoods || [];
+          state.notes = parsed.notes || [];
+        }
+      }catch(e){}
+    }
+    render();
+  }
+  function persist(){
+    if(!storageOK) return;
+    try{ window.localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){ console.error(e); }
+  }
+  function save(){ persist(); render(); }
+
+  var ICONS = {
+    food:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0016 0z"/><path d="M4 12a8 8 0 0116-0"/><path d="M2 12h20"/><path d="M8 8V4M12 7V4M16 8V4"/></svg>',
+    water:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 7 6 11.5a6 6 0 01-12 0C6 10 12 3 12 3z"/></svg>',
+    drinks:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1.2 11.5a1.5 1.5 0 01-1.5 1.5H8.7a1.5 1.5 0 01-1.5-1.5z"/><path d="M9 8V5.5A1.5 1.5 0 0110.5 4h3A1.5 1.5 0 0115 5.5V8"/><path d="M16 3l2 3"/></svg>',
+    poop:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20c-3 0-5-1.4-5-3.4 0-1.3 1-2 2.2-2.4-.7-.5-1.2-1.2-1.2-2.1 0-1.5 1.4-2.4 2.9-2.3-.4-.5-.6-1-.6-1.7 0-1.7 1.7-2.8 3.5-2.4.3-1.3 1.6-2.2 3.1-1.9 1.3.2 2.2 1.3 2.2 2.6 1.6.1 2.9 1.2 2.9 2.6 0 .8-.4 1.5-1 2 1.2.3 2 1.2 2 2.4 0 1.7-1.7 2.9-3.8 2.9"/><circle cx="9.5" cy="16.5" r=".6" fill="currentColor" stroke="none"/><circle cx="14" cy="17" r=".6" fill="currentColor" stroke="none"/></svg>',
+    education:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 016.5 3H20v15.5H6.5A2.5 2.5 0 004 21V5.5z"/><path d="M4 18.5A2.5 2.5 0 016.5 16H20"/></svg>',
+    physical:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 8.5v7M4 10v4M17.5 8.5v7M20 10v4M8.5 12h7"/></svg>',
+    behaviour:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 10.5h.01M15.5 10.5h.01"/><path d="M8.5 15c1 1 2.3 1.5 3.5 1.5s2.5-.5 3.5-1.5"/></svg>',
+    medicine:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="9.5" width="17" height="7" rx="3.5" transform="rotate(-40 12 13)"/><path d="M9 15.5l6-6"/></svg>',
+    energy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg>',
+    sweets:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M8 9l-4-3v6z"/><path d="M16 9l4-3v6z"/></svg>',
+    chocolates:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="6" width="17" height="12" rx="1.5"/><path d="M3.5 12h17M9 6v12M15 6v12"/></svg>',
+    sleep:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1110 3.3 7 7 0 0020 14.5z"/></svg>',
+    camera:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5A1.5 1.5 0 015.5 7h2l1-2h7l1 2h2A1.5 1.5 0 0120 8.5v9A1.5 1.5 0 0118.5 19h-13A1.5 1.5 0 014 17.5z"/><circle cx="12" cy="13" r="3.4"/></svg>',
+    chevL:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>',
+    chevR:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>',
+    chevD:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>'
+  };
+
+  var CATS = [
+    {key:'food', label:'Food', fields:['name','tags','quantity']},
+    {key:'water', label:'Water', fields:['quantity']},
+    {key:'drinks', label:'Drinks', fields:['name','amount']},
+    {key:'poop', label:'Poop', fields:['times','consistency']},
+    {key:'education', label:'Education', fields:['name','duration']},
+    {key:'physical', label:'Physical', fields:['name','duration']},
+    {key:'behaviour', label:'Behaviour', fields:['name','mood','note']},
+    {key:'medicine', label:'Medicine', fields:['name','dosage','illness']},
+    {key:'energy', label:'Energy pwd', fields:['name','amount']},
+    {key:'sweets', label:'Sweets', fields:['name','quantity']},
+    {key:'chocolates', label:'Chocolate', fields:['name','quantity']}
+  ];
+  function catByKey(k){ for(var i=0;i<CATS.length;i++){ if(CATS[i].key===k) return CATS[i]; } return null; }
+
+  function addEntry(category, data){
+    state.entries.push(Object.assign({ id:Date.now()+'-'+Math.random().toString(36).slice(2,7), category:category, time:nowISO() }, data));
+    save();
+  }
+  function deleteEntry(id){ state.entries = state.entries.filter(function(e){ return e.id!==id; }); save(); }
+  function todaysEntries(category){
+    var t = todayStr();
+    return state.entries.filter(function(e){ return e.category===category && isoDateStr(e.time)===t; });
+  }
+
+  function activeSleep(){ return state.sleepEntries.find(function(s){ return !s.awakeAt; }) || null; }
+  function startSleep(){ if(activeSleep()) return; state.sleepEntries.push({ id:Date.now()+'-'+Math.random().toString(36).slice(2,7), asleepAt:nowISO(), awakeAt:null }); save(); }
+  function endSleep(){ var s=activeSleep(); if(!s) return; s.awakeAt = nowISO(); save(); }
+  function deleteSleep(id){ state.sleepEntries = state.sleepEntries.filter(function(s){ return s.id!==id; }); save(); }
+  function updateSleep(id, asleepISO, awakeISO){
+    var s = state.sleepEntries.find(function(x){ return x.id===id; });
+    if(!s) return null;
+    if(awakeISO && new Date(awakeISO) < new Date(asleepISO)) return 'Wake time is before sleep time.';
+    s.asleepAt = asleepISO; s.awakeAt = awakeISO || null;
+    save();
+    return null;
+  }
+  function sleepDurationMins(s){
+    if(!s.asleepAt) return 0;
+    var end = s.awakeAt ? new Date(s.awakeAt) : new Date();
+    var mins = Math.round((end-new Date(s.asleepAt))/60000);
+    return Math.max(0, mins);
+  }
+  function minsToHM(mins){ var h=Math.floor(mins/60), m=mins%60; return h+'h '+m+'m'; }
+  function todaysSleepTotal(){
+    var t = todayStr(), total=0;
+    state.sleepEntries.forEach(function(s){ if(isoDateStr(s.asleepAt)===t) total += sleepDurationMins(s); });
+    return total;
+  }
+
+  function addGrowth(date, height, weight){
+    state.child.growth.push({ id:Date.now()+'-'+Math.random().toString(36).slice(2,7), date:date, height:height, weight:weight });
+    state.child.growth.sort(function(a,b){ return parseDateStr(a.date)-parseDateStr(b.date); });
+    save();
+  }
+  function deleteGrowth(id){ state.child.growth = state.child.growth.filter(function(g){ return g.id!==id; }); save(); }
+
+  function resizeImage(file, cb){
+    var reader = new FileReader();
+    reader.onload = function(e){
+      var img = new Image();
+      img.onload = function(){
+        var maxW = 320;
+        var scale = Math.min(1, maxW/img.width);
+        var canvas = document.createElement('canvas');
+        canvas.width = Math.round(img.width*scale);
+        canvas.height = Math.round(img.height*scale);
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img,0,0,canvas.width,canvas.height);
+        cb(canvas.toDataURL('image/jpeg',0.75));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+  function addPhoto(dataUrl){
+    state.child.photos.push({ id:Date.now()+'-'+Math.random().toString(36).slice(2,7), dataUrl:dataUrl, date:todayStr() });
+    save();
+  }
+  function deletePhoto(id){ state.child.photos = state.child.photos.filter(function(p){ return p.id!==id; }); save(); }
+  function sortedPhotosDesc(){ return state.child.photos.slice().sort(function(a,b){ return parseDateStr(b.date)-parseDateStr(a.date); }); }
+  function currentPhoto(){ var s=sortedPhotosDesc(); return s.length ? s[0] : null; }
+
+  // ================= RENDERING =================
+
+  function catIconTag(key){ return '<span class="cicon">'+ICONS[key]+'</span>'; }
+
+  function renderProfCard(){
+    var photo = currentPhoto();
+    var photoHtml = photo ? '<img class="prof-photo" src="'+photo.dataUrl+'">' :
+      '<div class="prof-photo-placeholder">'+ICONS.camera+'</div>';
+    var name = state.child.name || 'Add child profile';
+    var age = state.child.dob ? ageString(state.child.dob) : 'Tap to set up';
+    return '<div class="profcard" data-action="go-profile">'+photoHtml+
+      '<div class="prof-info"><div class="pname">'+escapeHtml(name)+'</div><div class="page">'+escapeHtml(age)+'</div></div>'+
+      '<div class="prof-arrow">'+ICONS.chevR+'</div></div>';
+  }
+
+  function renderSleepCard(){
+    var active = activeSleep();
+    var html = '<div class="sleepcard">';
+    if(active){
+      html += '<div class="slabel">Sleeping since '+fmtTime(active.asleepAt)+'</div>';
+      html += '<div class="sval">'+minsToHM(sleepDurationMins(active))+'</div>';
+      html += '<button class="sleepbtn stop" data-action="end-sleep">'+ICONS.sleep+'Awake</button>';
+    } else {
+      var todayTotal = todaysSleepTotal();
+      html += '<div class="slabel">Today\'s sleep</div>';
+      html += '<div class="sval">'+(todayTotal>0 ? minsToHM(todayTotal) : '\u2013')+'</div>';
+      html += '<button class="sleepbtn go" data-action="start-sleep">'+ICONS.sleep+'Asleep</button>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function renderCatGrid(){
+    var html = '<div class="catgrid">';
+    CATS.forEach(function(c){
+      var entries = todaysEntries(c.key);
+      var count = entries.length;
+      var countLabel = count > 0 ? (c.key==='poop' ? count+' time'+(count===1?'':'s') : count) : '';
+      html += '<div class="catbtn" data-action="open-cat" data-cat="'+c.key+'">'+
+        catIconTag(c.key)+'<div class="clabel">'+c.label+'</div>'+
+        (countLabel ? '<div class="ccount">'+countLabel+'</div>' : '')+
+      '</div>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function fieldFormHtml(cat){
+    var f = cat.fields;
+    var html = '<div class="form" data-form-cat="'+cat.key+'">';
+    if(f.indexOf('name')!==-1){
+      html += '<div class="form-row"><label>Name</label><input type="text" class="qf-name" placeholder="e.g. '+nameHint(cat.key)+'"></div>';
+    }
+    if(f.indexOf('tags')!==-1){
+      var allTags = FOOD_TAGS_DEFAULT.concat(state.customFoodTags);
+      html += '<div class="form-row"><label>Content (optional)</label><div class="chiprow">';
+      allTags.forEach(function(tag){
+        var isSel = formDraft.tags.indexOf(tag)!==-1;
+        html += '<button type="button" class="chip '+(isSel?'sel':'')+'" data-action="toggle-tag" data-tag="'+escapeHtml(tag)+'">'+escapeHtml(tag)+'</button>';
+      });
+      html += '<button type="button" class="chip addtag" data-action="add-custom-tag">+ Add tag</button>';
+      html += '</div></div>';
+    }
+    if(f.indexOf('quantity')!==-1){
+      var qHint = cat.key==='water' ? 'e.g. 200ml, 1 glass' : cat.key==='sweets'||cat.key==='chocolates' ? 'e.g. 2 pieces' : 'e.g. 1 bowl, half plate';
+      html += '<div class="form-row"><label>Quantity (optional)</label><input type="text" class="qf-quantity" placeholder="'+qHint+'"></div>';
+    }
+    if(f.indexOf('amount')!==-1){
+      html += '<div class="form-row"><label>Amount (optional)</label><input type="text" class="qf-amount" placeholder="e.g. 1 cup, 200ml"></div>';
+    }
+    if(f.indexOf('dosage')!==-1){
+      html += '<div class="form-row"><label>Dosage (optional)</label><input type="text" class="qf-dosage" placeholder="e.g. 5ml, 1 tablet"></div>';
+    }
+    if(f.indexOf('illness')!==-1){
+      html += '<div class="form-row"><label>For (optional)</label><input type="text" class="qf-illness" placeholder="e.g. Fever, Cold, Pain"></div>';
+    }
+    if(f.indexOf('times')!==-1){
+      html += '<div class="form-row"><label>How many times</label><input type="number" class="qf-times" min="1" value="1"></div>';
+    }
+    if(f.indexOf('consistency')!==-1){
+      html += '<div class="form-row"><label>Consistency (optional)</label><div class="chiprow">'+
+        ['Normal','Hard','Soft','Watery'].map(function(o){ return '<button type="button" class="chip '+(formDraft.singleVal===o?'sel':'')+'" data-action="toggle-single" data-val="'+o+'">'+o+'</button>'; }).join('')+
+      '</div></div>';
+    }
+    if(f.indexOf('duration')!==-1){
+      html += '<div class="form-row"><label>Duration (optional)</label><input type="text" class="qf-duration" placeholder="e.g. 30 min"></div>';
+    }
+    if(f.indexOf('mood')!==-1){
+      html += '<div class="form-row"><label>Mood</label><div class="chiprow">'+
+        allMoods().map(function(m){ return '<button type="button" class="chip '+(formDraft.singleVal===m?'sel':'')+'" data-action="toggle-single" data-val="'+m+'">'+m+'</button>'; }).join('')+
+        '<button type="button" class="chip addtag" data-action="add-custom-mood">+ Add mood</button>'+
+      '</div></div>';
+    }
+    if(f.indexOf('note')!==-1){
+      html += '<div class="form-row"><label>Note (optional)</label><textarea class="qf-note" rows="2" placeholder="Anything to remember"></textarea></div>';
+    }
+    html += '<div class="form-actions">'+
+      '<button class="btn" data-action="cancel-cat">Cancel</button>'+
+      '<button class="btn primary" data-action="save-cat" data-cat="'+cat.key+'">Log it</button>'+
+    '</div></div>';
+    return html;
+  }
+
+  function nameHint(key){
+    var hints = { food:'Rice, Banana', water:'', drinks:'Milk, Juice', medicine:'Paracetamol', energy:'Complan',
+      sweets:'Ice cream', chocolates:'KitKat', education:'Phonics', physical:'Swimming', behaviour:'Shared toys' };
+    return hints[key] || '';
+  }
+
+  function renderHome(){
+    var html = renderProfCard() + renderSleepCard() + renderCatGrid();
+
+    if(openCategory){
+      var cat = catByKey(openCategory);
+      if(cat) html += fieldFormHtml(cat);
+    }
+    document.getElementById('content').innerHTML = html;
+  }
+
+  // ---- report ----
+  function weekRange(dateStr){
+    var d = parseDateStr(dateStr);
+    var day = d.getDay();
+    var monday = new Date(d); monday.setDate(d.getDate() - ((day+6)%7));
+    var sunday = new Date(monday); sunday.setDate(monday.getDate()+6);
+    return {start:monday, end:sunday};
+  }
+  function inRange(dateObj, start, end){ return dateObj>=start && dateObj<=end; }
+
+  function renderDayReport(){
+    var html = '';
+    html += '<div class="daynav">'+
+      '<button data-action="day-prev">'+ICONS.chevL+'</button>'+
+      '<div class="dtext">'+fmtPretty(reportDate)+'</div>'+
+      '<button data-action="day-next">'+ICONS.chevR+'</button></div>';
+
+    var dObj = parseDateStr(reportDate);
+    var moon = moonPhase(dObj);
+    html += '<div class="moonrow"><span class="memoji">'+moon.emoji+'</span> '+moon.name+'</div>';
+
+    var daySleep = state.sleepEntries.filter(function(s){ return isoDateStr(s.asleepAt)===reportDate; });
+    var sleepTotal = daySleep.reduce(function(sum,s){ return sum+sleepDurationMins(s); },0);
+
+    html += '<div class="summarygrid">';
+    html += '<div class="sumcard"><div class="sc-label">Sleep</div><div class="sc-val">'+(sleepTotal>0?minsToHM(sleepTotal):'\u2013')+'</div></div>';
+    ['food','water','drinks','poop','medicine'].forEach(function(key){
+      var cat = catByKey(key);
+      var n = state.entries.filter(function(e){ return e.category===key && isoDateStr(e.time)===reportDate; }).length;
+      var label = key==='poop' ? 'Poop today' : cat.label;
+      html += '<div class="sumcard"><div class="sc-label">'+label+'</div><div class="sc-val">'+n+(key==='poop'?' time'+(n===1?'':'s'):'')+'</div></div>';
+    });
+    html += '</div>';
+
+    if(daySleep.length>0){
+      html += '<div class="catlog-group"><div class="catlog-head">'+ICONS.sleep+' Sleep</div>';
+      daySleep.forEach(function(s){
+        if(editingSleepId===s.id){
+          html += '<div class="form" data-sleep-edit="'+s.id+'">'+
+            '<div class="form-row"><label>Asleep at</label><input type="datetime-local" class="sf-asleep" value="'+toDatetimeLocal(s.asleepAt)+'"></div>'+
+            '<div class="form-row"><label>Awake at</label><input type="datetime-local" class="sf-awake" value="'+toDatetimeLocal(s.awakeAt)+'"></div>'+
+            '<div class="form-row" style="color:var(--pink); font-size:11.5px; font-weight:700;" id="sleepErr"></div>'+
+            '<div class="form-actions">'+
+              '<button class="btn" data-action="cancel-sleep-edit">Cancel</button>'+
+              '<button class="btn primary" data-action="save-sleep-edit" data-id="'+s.id+'">Save</button>'+
+            '</div></div>';
+        } else {
+          html += '<div class="catlog-item"><div class="li-main">'+
+            '<div class="li-name">'+fmtTime(s.asleepAt)+' \u2192 '+(s.awakeAt?fmtTime(s.awakeAt):'ongoing')+'</div>'+
+            '<div class="li-detail">'+minsToHM(sleepDurationMins(s))+'</div></div>'+
+            '<button class="li-del" data-action="edit-sleep" data-id="'+s.id+'" style="color:var(--blue-dark);">edit</button>'+
+            '<button class="li-del" data-action="del-sleep" data-id="'+s.id+'">remove</button></div>';
+        }
+      });
+      html += '</div>';
+    }
+
+    CATS.forEach(function(c){
+      var items = state.entries.filter(function(e){ return e.category===c.key && isoDateStr(e.time)===reportDate; });
+      if(items.length===0) return;
+      html += '<div class="catlog-group"><div class="catlog-head">'+ICONS[c.key]+' '+c.label+'</div>';
+      items.forEach(function(e){
+        html += '<div class="catlog-item"><div class="li-main">'+
+          '<div class="li-name">'+(e.name?escapeHtml(e.name):c.label)+'</div>'+
+          '<div class="li-detail">'+entryDetailStr(e)+'</div></div>'+
+          '<div class="li-time">'+fmtTime(e.time)+'</div>'+
+          '<button class="li-del" data-action="del-entry" data-id="'+e.id+'">remove</button></div>';
+      });
+      html += '</div>';
+    });
+
+    return html;
+  }
+
+  function entryDetailStr(e){
+    var parts = [];
+    if(e.tags && e.tags.length) parts.push(e.tags.join(', '));
+    if(e.consistency) parts.push(e.consistency);
+    if(e.mood) parts.push(e.mood);
+    if(e.quantity) parts.push(e.quantity);
+    if(e.amount) parts.push(e.amount);
+    if(e.dosage) parts.push(e.dosage);
+    if(e.illness) parts.push('For: '+e.illness);
+    if(e.duration) parts.push(e.duration);
+    if(e.note) parts.push(e.note);
+    return parts.join(' \u00b7 ') || '\u2013';
+  }
+
+  function renderWeekMonthReport(kind){
+    var range;
+    if(kind==='week'){ range = weekRange(reportDate); }
+    else {
+      var d = parseDateStr(reportDate);
+      range = { start:new Date(d.getFullYear(), d.getMonth(), 1), end:new Date(d.getFullYear(), d.getMonth()+1, 0) };
+    }
+    var label = kind==='week' ?
+      (fmtPretty(range.start.getFullYear()+'-'+pad(range.start.getMonth()+1)+'-'+pad(range.start.getDate()))+' \u2013 '+fmtPretty(range.end.getFullYear()+'-'+pad(range.end.getMonth()+1)+'-'+pad(range.end.getDate()))) :
+      range.start.toLocaleDateString(undefined,{month:'long', year:'numeric'});
+
+    var html = '<div class="daynav">'+
+      '<button data-action="'+kind+'-prev">'+ICONS.chevL+'</button>'+
+      '<div class="dtext">'+label+'</div>'+
+      '<button data-action="'+kind+'-next">'+ICONS.chevR+'</button></div>';
+
+    var sleepMins = 0;
+    state.sleepEntries.forEach(function(s){
+      var d = new Date(s.asleepAt);
+      if(inRange(dateOnly(d), range.start, range.end)) sleepMins += sleepDurationMins(s);
+    });
+
+    html += '<div class="summarygrid"><div class="sumcard"><div class="sc-label">Total sleep</div><div class="sc-val">'+(sleepMins>0?minsToHM(sleepMins):'\u2013')+'</div></div>';
+    CATS.forEach(function(c){
+      var n = state.entries.filter(function(e){ return e.category===c.key && inRange(dateOnly(new Date(e.time)), range.start, range.end); }).length;
+      html += '<div class="sumcard"><div class="sc-label">'+c.label+'</div><div class="sc-val">'+n+'</div></div>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function renderReport(){
+    var html = '<div class="tabs-row">'+
+      ['day','week','month'].map(function(t){
+        return '<button class="tab2 '+(reportTab===t?'sel':'')+'" data-action="report-tab" data-tab="'+t+'">'+(t==='day'?'Daily':t==='week'?'Weekly':'Monthly')+'</button>';
+      }).join('')+'</div>';
+    if(reportTab==='day') html += renderDayReport();
+    else html += renderWeekMonthReport(reportTab);
+    document.getElementById('content').innerHTML = html;
+  }
+
+  // ---- profile ----
+  function growthChartSvg(){
+    var g = state.child.growth;
+    if(g.length<2) return '';
+    var w=280,h=90,pad=10;
+    function scaleVals(vals){
+      var min=Math.min.apply(null,vals), max=Math.max.apply(null,vals);
+      if(min===max){ min-=1; max+=1; }
+      return {min:min,max:max};
+    }
+    var heights = g.map(function(x){ return x.height; });
+    var sc = scaleVals(heights);
+    var pts = g.map(function(x,i){
+      var px = pad + (i/(g.length-1))*(w-2*pad);
+      var py = h-pad - ((x.height-sc.min)/(sc.max-sc.min))*(h-2*pad);
+      return px+','+py;
+    }).join(' ');
+    return '<svg class="growthchart" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none">'+
+      '<polyline points="'+pts+'" fill="none" stroke="#3E7CB1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'+
+      '</svg>';
+  }
+
+  function renderProfile(){
+    var c = state.child;
+    var photo = currentPhoto();
+    var html = photo ? '<img class="profile-photo-big" src="'+photo.dataUrl+'">' :
+      '<div class="profile-photo-big-placeholder">'+ICONS.camera+'</div>';
+    html += '<button class="photobtn" data-action="pick-photo">Change photo</button>';
+    html += '<input type="file" id="photoInput" accept="image/*" style="display:none;">';
+
+    html += '<div class="form">';
+    html += '<div class="form-row"><label>Name</label><input type="text" id="pf-name" value="'+escapeHtml(c.name)+'" placeholder="Child\'s name"></div>';
+    html += '<div class="form-row"><label>Date of birth</label><input type="date" id="pf-dob" value="'+escapeHtml(c.dob)+'"></div>';
+    if(c.dob) html += '<div style="font-size:12.5px; color:var(--blue-dark); font-weight:700; margin-bottom:8px;">Age: '+ageString(c.dob)+'</div>';
+    html += '<div class="form-actions"><button class="btn primary" data-action="save-profile-info" style="flex:none; padding:9px 20px;">Save</button></div>';
+    html += '</div>';
+
+    html += '<button class="navbtn" data-action="go-photos" style="margin-bottom:16px;">View photo history \u2192</button>';
+
+    html += '<div class="section-title">Growth</div>';
+    html += growthChartSvg();
+    html += '<div class="form">';
+    html += '<div class="form-row"><label>Date</label><input type="date" id="gf-date" value="'+todayStr()+'"></div>';
+    html += '<div class="form-row"><label>Height (cm)</label><input type="number" id="gf-height" step="0.1"></div>';
+    html += '<div class="form-row"><label>Weight (kg)</label><input type="number" id="gf-weight" step="0.1"></div>';
+    html += '<div class="form-actions"><button class="btn primary" data-action="save-growth">Add entry</button></div>';
+    html += '</div>';
+
+    var gDesc = c.growth.slice().sort(function(a,b){ return parseDateStr(b.date)-parseDateStr(a.date); });
+    gDesc.forEach(function(g){
+      html += '<div class="catlog-item"><div class="li-main">'+
+        '<div class="li-name">'+fmtPretty(g.date)+'</div>'+
+        '<div class="li-detail">'+g.height+' cm \u00b7 '+g.weight+' kg</div></div>'+
+        '<button class="li-del" data-action="del-growth" data-id="'+g.id+'">remove</button></div>';
+    });
+
+    document.getElementById('content').innerHTML = html;
+    var fi = document.getElementById('photoInput');
+    fi.onchange = function(e){
+      if(e.target.files && e.target.files[0]){
+        resizeImage(e.target.files[0], function(dataUrl){ addPhoto(dataUrl); });
+      }
+    };
+  }
+
+  function renderPhotos(){
+    var photos = sortedPhotosDesc();
+    var html = '';
+    if(photos.length===0){
+      html = '<div class="empty">No photos yet.</div>';
+    } else {
+      html = '<div class="photogrid">';
+      photos.forEach(function(p,i){
+        html += '<div class="photocell"><img src="'+p.dataUrl+'">'+
+          '<div class="pcap">'+fmtPretty(p.date)+(i===0?' \u2b50':'')+'</div>'+
+          '<div style="text-align:center; padding-bottom:6px;"><button class="li-del" data-action="del-photo" data-id="'+p.id+'">remove</button></div>'+
+        '</div>';
+      });
+      html += '</div>';
+    }
+    document.getElementById('content').innerHTML = html;
+  }
+
+  function renderNotes(){
+    var editNote = editingNoteId ? state.notes.find(function(n){ return n.id===editingNoteId; }) : null;
+    var html = '<div class="form">';
+    html += '<div class="form-row"><label>'+(editNote?'Edit note':'New note')+'</label>'+
+      '<textarea id="notes-input" rows="3" style="width:100%; border:1px solid var(--line); border-radius:9px; padding:9px 10px; font-family:Inter,sans-serif; font-size:13.5px;">'+
+      (editNote ? escapeHtml(editNote.text) : '')+
+      '</textarea></div>';
+    html += '<div class="form-actions">';
+    if(editNote) html += '<button class="btn" data-action="cancel-note-edit">Cancel</button>';
+    html += '<button class="btn primary" data-action="save-note">'+(editNote?'Update':'Save note')+'</button>';
+    html += '</div></div>';
+
+    var sorted = state.notes.slice().sort(function(a,b){ return new Date(b.createdAt)-new Date(a.createdAt); });
+    if(sorted.length===0){
+      html += '<div class="empty">No notes yet.<small>Add your first one above.</small></div>';
+    } else {
+      sorted.forEach(function(n){
+        html += '<div class="catlog-item" style="align-items:flex-start; flex-direction:column; gap:6px;">'+
+          '<div class="li-name" style="white-space:pre-wrap; font-weight:500;">'+escapeHtml(n.text)+'</div>'+
+          '<div style="display:flex; justify-content:space-between; width:100%; align-items:center;">'+
+            '<div class="li-detail">'+fmtTime(n.createdAt)+' \u00b7 '+fmtPretty(isoDateStr(n.createdAt))+(n.editedAt?' \u00b7 edited':'')+'</div>'+
+            '<div><button class="li-del" data-action="edit-note" data-id="'+n.id+'" style="color:var(--blue-dark); margin-right:8px;">edit</button>'+
+            '<button class="li-del" data-action="del-note" data-id="'+n.id+'">delete</button></div>'+
+          '</div></div>';
+      });
+    }
+    document.getElementById('content').innerHTML = html;
+  }
+
+  function render(){
+    document.getElementById('reportBtn').classList.toggle('active', view==='report');
+    document.getElementById('notesBtn').classList.toggle('active', view==='notes');
+    if(view==='report') renderReport();
+    else if(view==='profile') renderProfile();
+    else if(view==='photos') renderPhotos();
+    else if(view==='notes') renderNotes();
+    else renderHome();
+  }
+
+  // ================= EVENTS =================
+  document.getElementById('reportBtn').addEventListener('click', function(){
+    view = (view==='report') ? 'home' : 'report';
+    openCategory = null;
+    render();
+  });
+  document.getElementById('notesBtn').addEventListener('click', function(){
+    view = (view==='notes') ? 'home' : 'notes';
+    editingNoteId = null;
+    render();
+  });
+  document.getElementById('logbookBtn').addEventListener('click', function(){
+    window.location.href = 'logbook.html';
+  });
+  document.querySelector('.brand').addEventListener('click', function(){ view='home'; openCategory=null; render(); });
+
+  document.getElementById('content').addEventListener('click', function(e){
+    var el = e.target.closest('[data-action]');
+    if(!el) return;
+    var action = el.getAttribute('data-action');
+
+    if(action==='go-profile'){ view='profile'; render(); }
+    else if(action==='go-photos'){ view='photos'; render(); }
+    else if(action==='start-sleep'){ startSleep(); }
+    else if(action==='end-sleep'){ endSleep(); }
+    else if(action==='open-cat'){
+      var key = el.getAttribute('data-cat');
+      openCategory = (openCategory===key) ? null : key;
+      formDraft = {tags:[], singleVal:''};
+      render();
+      if(openCategory){
+        var form = document.querySelector('[data-form-cat]');
+        if(form){ var nm=form.querySelector('.qf-name'); if(nm) nm.focus(); }
+      }
+    }
+    else if(action==='cancel-cat'){ openCategory=null; formDraft={tags:[],singleVal:''}; render(); }
+    else if(action==='toggle-tag'){
+      var tag = el.getAttribute('data-tag');
+      var idx = formDraft.tags.indexOf(tag);
+      if(idx===-1) formDraft.tags.push(tag); else formDraft.tags.splice(idx,1);
+      // Update only the chip buttons in place, not the full page
+      el.closest('.chiprow').querySelectorAll('.chip[data-action="toggle-tag"]').forEach(function(btn){
+        var btnTag = btn.getAttribute('data-tag');
+        btn.classList.toggle('sel', formDraft.tags.indexOf(btnTag)!==-1);
+      });
+    }
+    else if(action==='toggle-single'){
+      var val = el.getAttribute('data-val');
+      formDraft.singleVal = (formDraft.singleVal===val) ? '' : val;
+      // Update only the chip buttons in place
+      el.closest('.chiprow').querySelectorAll('.chip[data-action="toggle-single"]').forEach(function(btn){
+        btn.classList.toggle('sel', btn.getAttribute('data-val')===formDraft.singleVal);
+      });
+    }
+    else if(action==='add-custom-tag'){
+      var nt = prompt('New food tag:');
+      if(nt && nt.trim()){
+        nt = nt.trim();
+        if(state.customFoodTags.indexOf(nt)===-1) state.customFoodTags.push(nt);
+        formDraft.tags.push(nt);
+        persist();
+        // Add the new chip in place
+        var chiprow = el.closest('.chiprow');
+        var newChip = document.createElement('button');
+        newChip.type = 'button';
+        newChip.className = 'chip sel';
+        newChip.setAttribute('data-action','toggle-tag');
+        newChip.setAttribute('data-tag', nt);
+        newChip.textContent = nt;
+        chiprow.insertBefore(newChip, el);
+      }
+    }
+    else if(action==='add-custom-mood'){
+      var nm2 = prompt('New mood name:');
+      if(nm2 && nm2.trim()){
+        nm2 = nm2.trim();
+        if(state.customMoods.indexOf(nm2)===-1) state.customMoods.push(nm2);
+        formDraft.singleVal = nm2;
+        persist();
+        // Add new mood chip and deselect others
+        var moodrow = el.closest('.chiprow');
+        moodrow.querySelectorAll('.chip[data-action="toggle-single"]').forEach(function(b){ b.classList.remove('sel'); });
+        var mc = document.createElement('button');
+        mc.type='button'; mc.className='chip sel';
+        mc.setAttribute('data-action','toggle-single');
+        mc.setAttribute('data-val', nm2);
+        mc.textContent = nm2;
+        moodrow.insertBefore(mc, el);
+      }
+    }
+    else if(action==='save-cat'){
+      var cKey = el.getAttribute('data-cat');
+      var cat = catByKey(cKey);
+      var container = el.closest('.form');
+      var data = {};
+      if(cat.fields.indexOf('name')!==-1){ var nmEl=container.querySelector('.qf-name'); data.name = nmEl?nmEl.value.trim():''; }
+      if(cat.fields.indexOf('tags')!==-1){ data.tags = formDraft.tags.slice(); }
+      if(cat.fields.indexOf('quantity')!==-1){ var qEl=container.querySelector('.qf-quantity'); data.quantity = qEl?qEl.value.trim():''; }
+      if(cat.fields.indexOf('amount')!==-1){ var aEl=container.querySelector('.qf-amount'); data.amount = aEl?aEl.value.trim():''; }
+      if(cat.fields.indexOf('dosage')!==-1){ var dEl=container.querySelector('.qf-dosage'); data.dosage = dEl?dEl.value.trim():''; }
+      if(cat.fields.indexOf('illness')!==-1){ var illEl=container.querySelector('.qf-illness'); data.illness = illEl?illEl.value.trim():''; }
+      if(cat.fields.indexOf('consistency')!==-1){ data.consistency = formDraft.singleVal||''; }
+      if(cat.fields.indexOf('duration')!==-1){ var durEl=container.querySelector('.qf-duration'); data.duration = durEl?durEl.value.trim():''; }
+      if(cat.fields.indexOf('mood')!==-1){ data.mood = formDraft.singleVal||''; }
+      if(cat.fields.indexOf('note')!==-1){ var noteEl=container.querySelector('.qf-note'); data.note = noteEl?noteEl.value.trim():''; }
+      var times = 1;
+      if(cat.fields.indexOf('times')!==-1){ var timesEl=container.querySelector('.qf-times'); times = Math.max(1, parseInt(timesEl?timesEl.value:1,10)||1); }
+      for(var ti=0; ti<times; ti++){ addEntry(cKey, Object.assign({}, data)); }
+      openCategory = null;
+      formDraft = {tags:[],singleVal:''};
+      render();
+    }
+    else if(action==='del-entry'){ if(confirm('Remove this entry?')) deleteEntry(el.getAttribute('data-id')); }
+    else if(action==='del-sleep'){ if(confirm('Remove this sleep entry?')) deleteSleep(el.getAttribute('data-id')); }
+    else if(action==='edit-sleep'){ editingSleepId = el.getAttribute('data-id'); render(); }
+    else if(action==='cancel-sleep-edit'){ editingSleepId = null; render(); }
+    else if(action==='save-sleep-edit'){
+      var sid = el.getAttribute('data-id');
+      var sform = el.closest('.form');
+      var asleepVal = fromDatetimeLocal(sform.querySelector('.sf-asleep').value);
+      var awakeVal = fromDatetimeLocal(sform.querySelector('.sf-awake').value);
+      var err = updateSleep(sid, asleepVal, awakeVal);
+      if(err){ document.getElementById('sleepErr').textContent = err; }
+      else { editingSleepId = null; render(); }
+    }
+    else if(action==='go-notes'){ view='notes'; render(); }
+    else if(action==='save-note'){
+      var noteText = document.getElementById('notes-input').value.trim();
+      if(!noteText) return;
+      if(editingNoteId){
+        var en = state.notes.find(function(n){ return n.id===editingNoteId; });
+        if(en){ en.text=noteText; en.editedAt=nowISO(); }
+        editingNoteId = null;
+      } else {
+        state.notes.push({ id:Date.now()+'-'+Math.random().toString(36).slice(2,7), text:noteText, createdAt:nowISO() });
+      }
+      save();
+    }
+    else if(action==='edit-note'){
+      editingNoteId = el.getAttribute('data-id');
+      render();
+      var ni = document.getElementById('notes-input');
+      if(ni){ ni.focus(); }
+    }
+    else if(action==='cancel-note-edit'){ editingNoteId=null; render(); }
+    else if(action==='del-note'){ if(confirm('Delete this note?')){ state.notes=state.notes.filter(function(n){ return n.id!==el.getAttribute('data-id'); }); save(); } }
+    else if(action==='day-prev' || action==='day-next'){
+      var dd = parseDateStr(reportDate); dd.setDate(dd.getDate() + (action==='day-next'?1:-1));
+      reportDate = dd.getFullYear()+'-'+pad(dd.getMonth()+1)+'-'+pad(dd.getDate());
+      render();
+    }
+    else if(action==='week-prev' || action==='week-next'){
+      var wd = parseDateStr(reportDate); wd.setDate(wd.getDate() + (action==='week-next'?7:-7));
+      reportDate = wd.getFullYear()+'-'+pad(wd.getMonth()+1)+'-'+pad(wd.getDate());
+      render();
+    }
+    else if(action==='month-prev' || action==='month-next'){
+      var md = parseDateStr(reportDate); md.setMonth(md.getMonth() + (action==='month-next'?1:-1));
+      reportDate = md.getFullYear()+'-'+pad(md.getMonth()+1)+'-'+pad(md.getDate());
+      render();
+    }
+    else if(action==='report-tab'){ reportTab = el.getAttribute('data-tab'); render(); }
+    else if(action==='pick-photo'){ document.getElementById('photoInput').click(); }
+    else if(action==='del-photo'){ if(confirm('Remove this photo?')) deletePhoto(el.getAttribute('data-id')); }
+    else if(action==='save-profile-info'){
+      state.child.name = document.getElementById('pf-name').value.trim();
+      state.child.dob = document.getElementById('pf-dob').value;
+      save();
+    }
+    else if(action==='save-growth'){
+      var gd = document.getElementById('gf-date').value;
+      var gh = parseFloat(document.getElementById('gf-height').value);
+      var gw = parseFloat(document.getElementById('gf-weight').value);
+      if(!gd || isNaN(gh) || isNaN(gw)){ alert('Please fill date, height and weight.'); return; }
+      addGrowth(gd, gh, gw);
+    }
+    else if(action==='del-growth'){ if(confirm('Remove this growth entry?')) deleteGrowth(el.getAttribute('data-id')); }
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>
